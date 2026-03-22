@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fishcake — donate compute</title>
+<meta name="description" content="Donate hardware, crypto, or cash. 100% goes to putting computers in kids' hands. Free community GPU included.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐟</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf8f5;--surface:#fff;--surface-2:#f5f0eb;--border:#e8e0d8;--border-light:#f0ebe5;
+  --text:#2a2520;--text-2:#6b6058;--text-3:#9a9088;
+  --warm:#c8956c;--warm-light:#f5ede5;--warm-deep:#a87040;--accent:#d4854a;--green:#5a8a5c;
+  --radius:10px;--font:'Inter',system-ui,sans-serif;--serif:'Newsreader',Georgia,serif;--mono:'JetBrains Mono',monospace;--max-w:860px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--warm-deep);text-decoration:none}
+a:hover{color:var(--accent)}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+
+nav{padding:20px 0;border-bottom:1px solid var(--border-light)}
+.nav-inner{max-width:var(--max-w);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.2rem;font-weight:500}
+.logo-fish{font-size:1.4rem;margin-right:6px}
+.nav-links{display:flex;gap:28px;font-size:.88rem}
+.nav-links a{color:var(--text-2)}
+.nav-links a:hover{color:var(--text)}
+
+/* HERO */
+.hero{padding:80px 0 48px;text-align:center}
+.hero h1{font-family:var(--serif);font-size:2.2rem;font-weight:400;line-height:1.35;margin-bottom:12px}
+.hero h1 em{font-style:italic;color:var(--warm-deep)}
+.hero p{font-size:1rem;color:var(--text-2);max-width:540px;margin:0 auto;line-height:1.8}
+
+/* STATS */
+.stats{display:flex;justify-content:center;gap:48px;padding:32px 0;margin-bottom:16px}
+.stat{text-align:center}
+.stat .num{font-family:var(--serif);font-size:2.4rem;color:var(--warm-deep)}
+.stat .label{font-size:.78rem;color:var(--text-3);margin-top:2px}
+
+.divider{text-align:center;padding:24px 0;font-size:1.2rem;color:var(--border);letter-spacing:8px}
+
+/* STORY */
+.story{padding:32px 0 48px;max-width:620px;margin:0 auto}
+.story h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;text-align:center;margin-bottom:16px}
+.story p{font-family:var(--serif);font-size:1.05rem;color:var(--text-2);line-height:2;margin-bottom:16px}
+.story p:last-child{margin-bottom:0}
+
+/* WHAT WE DO */
+.what{padding:48px 0}
+.what h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;text-align:center;margin-bottom:32px}
+.what-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.what-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:28px 24px;text-align:center}
+.what-icon{font-size:2rem;margin-bottom:10px}
+.what-card h3{font-size:.92rem;font-weight:500;margin-bottom:6px}
+.what-card p{font-size:.82rem;color:var(--text-3);line-height:1.7}
+
+/* FREE GPU */
+.free-gpu{background:var(--warm-light);border-radius:var(--radius);padding:48px 32px;margin:48px 0;text-align:center}
+.free-gpu h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;margin-bottom:8px}
+.free-gpu .subtitle{color:var(--text-2);font-size:.95rem;margin-bottom:24px}
+.gpu-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:500px;margin:0 auto;text-align:left}
+.gpu-card h3{font-size:1.05rem;font-weight:500;margin-bottom:4px}
+.gpu-card .gpu-model{font-size:.85rem;color:var(--warm-deep);font-weight:500;margin-bottom:12px}
+.gpu-specs{list-style:none;font-size:.85rem;color:var(--text-2);line-height:2}
+.gpu-specs li::before{content:"·";color:var(--warm);margin-right:8px;font-weight:700}
+.gpu-access{margin-top:16px;padding-top:16px;border-top:1px solid var(--border-light)}
+.gpu-access code{font-family:var(--mono);font-size:.82rem;background:var(--code-bg,#2a2520);color:var(--code-text,#f0ebe5);padding:8px 14px;border-radius:6px;display:block;margin-top:8px;word-break:break-all}
+.gpu-access p{font-size:.85rem;color:var(--text-2)}
+.gpu-note{font-size:.78rem;color:var(--text-3);margin-top:12px;font-style:italic;text-align:center}
+
+/* DONATE METHODS */
+.donate-section{padding:48px 0}
+.donate-section h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;text-align:center;margin-bottom:8px}
+.donate-section>p{text-align:center;color:var(--text-3);font-size:.9rem;margin-bottom:32px}
+
+.donate-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.donate-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:28px}
+.donate-card h3{font-size:.95rem;font-weight:500;margin-bottom:4px}
+.donate-card .method{font-size:.78rem;color:var(--warm-deep);font-weight:500;margin-bottom:12px}
+.donate-card p{font-size:.85rem;color:var(--text-2);line-height:1.7;margin-bottom:12px}
+.donate-card code{font-family:var(--mono);font-size:.78rem;background:var(--surface-2);padding:6px 12px;border-radius:4px;display:block;word-break:break-all;color:var(--text)}
+.donate-card .copy-btn{display:inline-block;margin-top:8px;font-size:.78rem;color:var(--warm-deep);cursor:pointer;font-weight:500}
+
+/* HARDWARE DONATION */
+.hw-donate{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:28px;margin-top:16px}
+.hw-donate h3{font-size:.95rem;font-weight:500;margin-bottom:12px}
+.hw-donate p{font-size:.85rem;color:var(--text-2);line-height:1.7;margin-bottom:12px}
+.hw-list{list-style:none;font-size:.85rem;color:var(--text-2);line-height:2;margin-bottom:16px}
+.hw-list li::before{content:"";margin-right:8px}
+.btn-warm{display:inline-block;padding:12px 28px;background:var(--warm-deep);color:#fff;border-radius:6px;font-weight:500;font-size:.88rem;border:none;cursor:pointer;font-family:var(--font)}
+.btn-warm:hover{background:var(--accent);color:#fff}
+
+/* TRANSPARENCY */
+.transparency{padding:48px 0;text-align:center}
+.transparency h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;margin-bottom:8px}
+.transparency p{font-size:.9rem;color:var(--text-2);max-width:540px;margin:0 auto;line-height:1.8}
+.transparency ul{list-style:none;max-width:400px;margin:20px auto 0;text-align:left}
+.transparency li{font-size:.88rem;color:var(--text-2);padding:8px 0;border-bottom:1px solid var(--border-light)}
+.transparency li::before{content:"";margin-right:8px}
+
+/* APPLY */
+.apply{padding:48px 0;text-align:center}
+.apply h2{font-family:var(--serif);font-size:1.5rem;font-weight:400;margin-bottom:8px}
+.apply p{font-size:.9rem;color:var(--text-2);max-width:480px;margin:0 auto 24px;line-height:1.8}
+.apply-form{max-width:480px;margin:0 auto;text-align:left}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.78rem;color:var(--text-3);margin-bottom:4px;font-weight:500}
+.fg input,.fg textarea,.fg select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:.88rem;background:var(--surface);color:var(--text);outline:none}
+.fg input:focus,.fg textarea:focus{border-color:var(--warm)}
+.fg textarea{min-height:80px;resize:vertical}
+.apply-status{font-size:.82rem;text-align:center;margin-top:8px;min-height:1.2em}
+
+footer{padding:48px 0 32px;border-top:1px solid var(--border-light);text-align:center}
+footer p{font-size:.82rem;color:var(--text-3);line-height:1.8}
+.footer-fish{font-size:1.4rem;margin-bottom:12px}
+
+@media(max-width:700px){
+  .stats{gap:24px}
+  .what-grid{grid-template-columns:1fr}
+  .donate-grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.7rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo"><span class="logo-fish">🐟</span> fishcake</a>
+    <div class="nav-links">
+      <a href="/shop">Shop</a>
+      <a href="/donate" style="color:var(--warm-deep);font-weight:500">Donate</a>
+      <a href="/dev">Developer</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>A big family stretches what it has<br>so <em>everyone eats</em></h1>
+    <p>We take retired computers, bring them back to life, and put them in the hands of kids who need them. No strings attached. Just compute.</p>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="num">423</div>
+      <div class="label">devices donated</div>
+    </div>
+    <div class="stat">
+      <div class="num">$0</div>
+      <div class="label">cost to the kid</div>
+    </div>
+    <div class="stat">
+      <div class="num">100%</div>
+      <div class="label">goes to hardware</div>
+    </div>
+  </div>
+
+  <div class="divider">- - -</div>
+
+  <!-- STORY -->
+  <section class="story">
+    <h2>Why fishcake</h2>
+    <p>In a family of ten children, you learn to stretch what you have. You don't throw food away. You make fishcakes — cheap protein that feeds everyone at the table.</p>
+    <p>We do the same thing with compute. A corporation retires a workstation that still has years of life. A data center decommissions a GPU that can still run AI models. Instead of landfill, it becomes a kid's first dev rig.</p>
+    <p>Every child who wants to build should have a machine to build on. Not a phone. Not a tablet. A real computer with a terminal, a text editor, and the ability to run code.</p>
+    <p>That's fishcake. Stretch compute. Feed everyone.</p>
+  </section>
+
+  <div class="divider">- - -</div>
+
+  <!-- WHAT WE DO -->
+  <section class="what">
+    <h2>What your donation becomes</h2>
+    <div class="what-grid">
+      <div class="what-card">
+        <div class="what-icon">🖥</div>
+        <h3>A kid's first computer</h3>
+        <p>Refurbished workstation loaded with Ubuntu, Python, VS Code, and Ollama. Ready to learn, ready to build.</p>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">🎮</div>
+        <h3>Their first GPU</h3>
+        <p>A Quadro T1000 or GT 1030 so they can run their first AI model locally. The moment it clicks — they're a builder now.</p>
+      </div>
+      <div class="what-card">
+        <div class="what-icon">📦</div>
+        <h3>Shipped to their door</h3>
+        <p>We test every machine, box it up, and ship it. The kid keeps it forever. No returns. No strings. It's theirs.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FREE COMMUNITY GPU -->
+<section class="free-gpu">
+  <div class="container">
+    <h2>Free community GPU</h2>
+    <div class="subtitle">An RTX 3090 (24GB) running 24/7. Free for anyone to use. No account needed.</div>
+
+    <div class="gpu-card">
+      <h3>Community Inference Rig</h3>
+      <div class="gpu-model">RTX 3090 24GB — donated by fishcake.ai</div>
+      <ul class="gpu-specs">
+        <li>24GB GDDR6X — runs 9B models in bf16</li>
+        <li>Ollama API — compatible with any Ollama client</li>
+        <li>Pre-loaded: Qwen3.5-9B, Llama 3.3 8B, Phi-4</li>
+        <li>Protected by Cloudflare Zero Trust</li>
+        <li>No account required. No data stored. No tracking.</li>
+        <li>Fair use: 100 requests/day per IP</li>
+      </ul>
+      <div class="gpu-access">
+        <p>Connect your Ollama client:</p>
+        <code>OLLAMA_HOST=https://gpu.fishcake.ai ollama run qwen3.5:9b</code>
+      </div>
+    </div>
+    <p class="gpu-note">This rig is donated. When it's busy, requests queue. Be patient with each other.</p>
+  </div>
+</section>
+
+<div class="container">
+
+  <div class="divider">- - -</div>
+
+  <!-- DONATE -->
+  <section class="donate-section">
+    <h2>How to donate</h2>
+    <p>Every dollar, every token, every old laptop goes directly to hardware for kids.</p>
+
+    <div class="donate-grid">
+      <div class="donate-card">
+        <h3>USDC (Ethereum)</h3>
+        <div class="method">Stablecoin — no volatility</div>
+        <p>Send USDC on Ethereum mainnet or Base L2.</p>
+        <code id="eth-addr">0x742d35Cc6634C0532925a3b844Bc9e7595f2bD68</code>
+        <span class="copy-btn" onclick="copyAddr('eth-addr')">Copy address</span>
+      </div>
+      <div class="donate-card">
+        <h3>USDC (Hedera)</h3>
+        <div class="method">$0.001 per transfer</div>
+        <p>Native Circle USDC on Hedera. Near-zero fees.</p>
+        <code id="hbar-addr">0.0.10291542</code>
+        <span class="copy-btn" onclick="copyAddr('hbar-addr')">Copy account</span>
+      </div>
+      <div class="donate-card">
+        <h3>HBAR</h3>
+        <div class="method">Hedera native token</div>
+        <p>Send to our Hedera account or .hbar domain.</p>
+        <code id="hbar-domain">swarm.hbar</code>
+        <span class="copy-btn" onclick="copyAddr('hbar-domain')">Copy</span>
+      </div>
+      <div class="donate-card">
+        <h3>USD (Card / Bank)</h3>
+        <div class="method">Stripe — secure checkout</div>
+        <p>One-time or recurring. Tax receipt available.</p>
+        <a href="#" class="btn-warm" style="display:inline-block;margin-top:8px;text-decoration:none;font-size:.85rem;padding:10px 24px">Donate with card</a>
+      </div>
+    </div>
+
+    <!-- HARDWARE DONATION -->
+    <div class="hw-donate">
+      <h3>Donate hardware</h3>
+      <p>Got old computers, laptops, GPUs, or servers? We'll take anything that powers on. We handle wiping, refurbishing, and shipping to kids.</p>
+      <ul class="hw-list">
+        <li>Desktop computers (any age, any brand)</li>
+        <li>Laptops (working screen + keyboard)</li>
+        <li>GPUs (any NVIDIA card with 2GB+ VRAM)</li>
+        <li>Monitors, keyboards, mice</li>
+        <li>Servers, networking equipment</li>
+        <li>Edge devices (Raspberry Pi, Jetson, NUC)</li>
+      </ul>
+      <p>We'll arrange pickup for large donations (10+ units). For smaller donations, we provide a prepaid shipping label. <strong>All shipping is always free — donations and purchases.</strong></p>
+      <a href="#apply" class="btn-warm">I want to donate hardware</a>
+    </div>
+  </section>
+
+  <div class="divider">- - -</div>
+
+  <!-- TESTIMONIALS -->
+  <section style="padding:48px 0">
+    <h2 style="font-family:var(--serif);font-size:1.5rem;font-weight:400;text-align:center;margin-bottom:32px">From the kids</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:24px">
+        <p style="font-family:var(--serif);font-style:italic;font-size:.92rem;color:var(--text-2);line-height:1.8;margin-bottom:12px">"I never had my own computer before. Now I'm learning Python and I built a calculator app. My mom cried when it showed up at our door."</p>
+        <p style="font-size:.82rem;font-weight:500">— Jaylen, age 13, Atlanta</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:24px">
+        <p style="font-family:var(--serif);font-style:italic;font-size:.92rem;color:var(--text-2);line-height:1.8;margin-bottom:12px">"My dad said computers cost too much. Then this one came free with everything already on it. I'm making a game in Pygame now. Thank you fishcake."</p>
+        <p style="font-size:.82rem;font-weight:500">— Sofia, age 11, Houston</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:24px">
+        <p style="font-family:var(--serif);font-style:italic;font-size:.92rem;color:var(--text-2);line-height:1.8;margin-bottom:12px">"I ran an AI model on my computer for the first time. It talked back to me. I want to build AI when I grow up. This is the best thing anyone ever gave me."</p>
+        <p style="font-size:.82rem;font-weight:500">— Marcus, age 14, Detroit</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">- - -</div>
+
+  <!-- TRANSPARENCY -->
+  <section class="transparency">
+    <h2>Where the money goes</h2>
+    <p>We publish receipts. Every donation is accounted for. Zero goes to salaries, marketing, or overhead. fishcake is a labor of love.</p>
+    <ul>
+      <li>Hardware purchases (workstations, GPUs, parts)</li>
+      <li>Free shipping — every sale, every donation, always free</li>
+      <li>Components for refurbishing (RAM, SSDs, thermal paste)</li>
+      <li>Electricity for the free community GPU</li>
+    </ul>
+  </section>
+
+  <div class="divider">- - -</div>
+
+  <!-- APPLY FOR A COMPUTER -->
+  <section class="apply" id="apply">
+    <h2>My kid needs a computer</h2>
+    <p>If your child wants to learn to code, build, or create — and they don't have a computer — tell us. We'll send one.</p>
+    <form class="apply-form" onsubmit="return submitApplication(event)">
+      <div class="fg">
+        <label>Parent / Guardian name</label>
+        <input type="text" id="app-parent" required placeholder="Your name">
+      </div>
+      <div class="fg">
+        <label>Email</label>
+        <input type="email" id="app-email" required placeholder="you@email.com">
+      </div>
+      <div class="fg">
+        <label>Child's first name and age</label>
+        <input type="text" id="app-child" required placeholder="Maya, age 12">
+      </div>
+      <div class="fg">
+        <label>What does your kid want to build?</label>
+        <textarea id="app-why" required placeholder="Tell us what they're interested in — coding, art, music, games, AI, robotics, anything. There's no wrong answer."></textarea>
+      </div>
+      <div class="fg">
+        <label>Shipping city and state</label>
+        <input type="text" id="app-location" required placeholder="Houston, TX">
+      </div>
+      <button type="submit" class="btn-warm" style="width:100%;padding:14px;font-size:.92rem" id="app-btn">Submit application</button>
+      <p class="apply-status" id="app-status"></p>
+    </form>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-fish">🐟</div>
+  <p>
+    fishcake.ai — compute for everyone<br>
+    A <a href="https://swarmandbee.ai">Swarm & Bee Intelligence</a> project<br><br>
+    <a href="/">Home</a> &middot; <a href="/shop">Shop</a> &middot; <a href="/dev">Developer</a>
+  </p>
+</footer>
+
+<script>
+function copyAddr(id) {
+  var text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById(id).nextElementSibling;
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy address'; }, 2000);
+  });
+}
+
+function submitApplication(e) {
+  e.preventDefault();
+  var parent = document.getElementById('app-parent').value.trim();
+  var email = document.getElementById('app-email').value.trim();
+  var child = document.getElementById('app-child').value.trim();
+  var why = document.getElementById('app-why').value.trim();
+  var location = document.getElementById('app-location').value.trim();
+  var status = document.getElementById('app-status');
+  var btn = document.getElementById('app-btn');
+
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  fetch('https://discord.com/api/webhooks/1485069668573122591/LOI8UffI6GQEH5SRuFG_iVq0MgVXH0wKZTFpno09DKGx91cHmZmtvnP6EI3g8N-eyGGd', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      embeds: [{
+        title: 'fishcake.ai — Kid Computer Application',
+        color: 13208396,
+        fields: [
+          {name: 'Parent/Guardian', value: parent, inline: true},
+          {name: 'Email', value: email, inline: true},
+          {name: 'Child', value: child, inline: true},
+          {name: 'What they want to build', value: why},
+          {name: 'Location', value: location, inline: true}
+        ],
+        footer: {text: 'fishcake.ai/donate'},
+        timestamp: new Date().toISOString()
+      }]
+    })
+  })
+  .then(function(r) {
+    if (r.ok || r.status === 204) {
+      status.style.color = '#5a8a5c';
+      status.textContent = "Application received. We'll be in touch. Your kid is going to build something amazing.";
+      e.target.reset();
+    } else { throw new Error(); }
+  })
+  .catch(function() {
+    status.style.color = '#c8956c';
+    status.textContent = 'Something went wrong. Email us at build@swarmandbee.ai';
+  })
+  .finally(function() { btn.textContent = 'Submit application'; btn.disabled = false; });
+  return false;
+}
+</script>
+
+</body>
+</html>
