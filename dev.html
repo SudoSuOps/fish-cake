@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fishcake — developer</title>
+<meta name="description" content="fishcake.ai API — search inventory, check hardware specs and market values, integrate compute procurement into your apps.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐟</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf8f5;--surface:#fff;--surface-2:#f5f0eb;--border:#e8e0d8;--border-light:#f0ebe5;
+  --text:#2a2520;--text-2:#6b6058;--text-3:#9a9088;
+  --warm:#c8956c;--warm-light:#f5ede5;--warm-deep:#a87040;--accent:#d4854a;--green:#5a8a5c;
+  --code-bg:#2a2520;--code-text:#f0ebe5;--code-key:#d4854a;--code-str:#8ab88c;--code-num:#c8956c;
+  --radius:10px;--font:'Inter',system-ui,sans-serif;--serif:'Newsreader',Georgia,serif;--mono:'JetBrains Mono',monospace;--max-w:860px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--warm-deep);text-decoration:none}
+a:hover{color:var(--accent)}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+
+nav{padding:20px 0;border-bottom:1px solid var(--border-light)}
+.nav-inner{max-width:var(--max-w);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.2rem;font-weight:500}
+.logo-fish{font-size:1.4rem;margin-right:6px}
+.nav-links{display:flex;gap:28px;font-size:.88rem;color:var(--text-2)}
+.nav-links a{color:var(--text-2)}
+.nav-links a:hover{color:var(--text)}
+.nav-active{color:var(--warm-deep)!important;font-weight:500}
+
+.hero{padding:60px 0 40px}
+.hero h1{font-family:var(--serif);font-size:2rem;font-weight:400;margin-bottom:8px}
+.hero p{color:var(--text-2);font-size:.95rem;max-width:600px}
+
+/* SEARCH */
+.search-section{padding:32px 0}
+.search-box{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:24px}
+.search-box h2{font-size:1rem;font-weight:500;margin-bottom:12px}
+.search-row{display:flex;gap:8px}
+.search-row input{flex:1;padding:12px 16px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:.9rem;background:var(--bg);color:var(--text);outline:none}
+.search-row input:focus{border-color:var(--warm)}
+.search-row select{padding:12px 16px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:.88rem;background:var(--bg);color:var(--text);outline:none;min-width:140px}
+.btn{padding:12px 24px;background:var(--warm-deep);color:#fff;border:none;border-radius:6px;font-weight:500;font-size:.88rem;cursor:pointer;font-family:var(--font)}
+.btn:hover{background:var(--accent)}
+
+/* RESULTS */
+.results{margin-top:16px;display:none}
+.result-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:20px;margin-bottom:12px}
+.result-card h3{font-size:.95rem;font-weight:500;margin-bottom:4px}
+.result-specs{font-size:.82rem;color:var(--text-3);line-height:1.7}
+.result-prices{display:flex;gap:24px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light)}
+.result-price{text-align:center}
+.result-price .label{font-size:.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.04em}
+.result-price .val{font-family:var(--serif);font-size:1.1rem;color:var(--text)}
+.result-price .val.green{color:var(--green)}
+.result-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tag{font-size:.7rem;padding:3px 8px;border-radius:4px;background:var(--warm-light);color:var(--warm-deep);font-weight:500}
+
+/* API DOCS */
+.api-section{padding:48px 0}
+.api-section h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:8px}
+.api-section>p{color:var(--text-3);font-size:.9rem;margin-bottom:24px}
+
+.endpoint{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);margin-bottom:16px;overflow:hidden}
+.endpoint-header{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid var(--border-light)}
+.endpoint-header:hover{background:var(--surface-2)}
+.method{font-family:var(--mono);font-size:.75rem;font-weight:600;padding:4px 10px;border-radius:4px;letter-spacing:.02em}
+.method.get{background:#e8f5e8;color:#2d6a2d}
+.method.post{background:#e8edf5;color:#2d4a6a}
+.endpoint-path{font-family:var(--mono);font-size:.88rem;color:var(--text)}
+.endpoint-desc{font-size:.82rem;color:var(--text-3);margin-left:auto}
+.endpoint-body{padding:20px;display:none}
+.endpoint-body.open{display:block}
+.endpoint-body h4{font-size:.82rem;font-weight:600;color:var(--text-2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.endpoint-body p{font-size:.85rem;color:var(--text-2);margin-bottom:12px;line-height:1.7}
+
+pre{background:var(--code-bg);color:var(--code-text);padding:16px 20px;border-radius:8px;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.7;margin-bottom:16px}
+.k{color:var(--code-key)}.s{color:var(--code-str)}.n{color:var(--code-num)}.c{color:#888}
+
+.param-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:.82rem}
+.param-table th{text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);color:var(--text-2);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
+.param-table td{padding:8px 12px;border-bottom:1px solid var(--border-light)}
+.param-table code{font-family:var(--mono);font-size:.8rem;background:var(--surface-2);padding:2px 6px;border-radius:3px}
+.param-req{color:var(--accent);font-size:.72rem;font-weight:600}
+
+/* HARDWARE DB */
+.hw-section{padding:48px 0}
+.hw-section h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:8px}
+.hw-section>p{color:var(--text-3);font-size:.9rem;margin-bottom:24px}
+.hw-table{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden}
+.hw-table th{text-align:left;padding:12px 16px;background:var(--surface-2);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-2)}
+.hw-table td{padding:10px 16px;border-top:1px solid var(--border-light)}
+.hw-table tr:hover{background:var(--warm-light)}
+.hw-cat{font-weight:600;color:var(--warm-deep);padding:12px 16px;background:var(--warm-light);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+
+footer{padding:48px 0 32px;border-top:1px solid var(--border-light);text-align:center}
+footer p{font-size:.82rem;color:var(--text-3);line-height:1.8}
+.footer-fish{font-size:1.4rem;margin-bottom:12px}
+
+@media(max-width:700px){
+  .search-row{flex-direction:column}
+  .result-prices{flex-wrap:wrap;gap:12px}
+  .endpoint-desc{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo"><span class="logo-fish">🐟</span> fishcake</a>
+    <div class="nav-links">
+      <a href="/">Shop</a>
+      <a href="/#kids">Kids</a>
+      <a href="/dev" class="nav-active">Developer</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <section class="hero">
+    <h1>Developer</h1>
+    <p>Search inventory, look up hardware specs and market values, and integrate fishcake into your procurement workflow.</p>
+  </section>
+
+  <!-- COMPUTE SEARCH -->
+  <section class="search-section">
+    <div class="search-box">
+      <h2>Compute search</h2>
+      <div class="search-row">
+        <input type="text" id="hw-search" placeholder="Search hardware — e.g. Dell 7920, RTX 3090, HP Z4, T1000..." autofocus>
+        <select id="hw-category">
+          <option value="">All categories</option>
+          <option value="workstation">Workstations</option>
+          <option value="gpu">GPUs</option>
+          <option value="server">Servers</option>
+          <option value="edge">Edge devices</option>
+          <option value="parts">Parts</option>
+        </select>
+        <button class="btn" onclick="searchHardware()">Search</button>
+      </div>
+      <div class="results" id="results"></div>
+    </div>
+  </section>
+
+  <!-- API DOCS -->
+  <section class="api-section">
+    <h2>API</h2>
+    <p>Base URL: <code style="font-family:var(--mono);background:var(--surface-2);padding:2px 8px;border-radius:4px">https://api.fishcake.ai/v1</code></p>
+
+    <!-- GET /inventory -->
+    <div class="endpoint">
+      <div class="endpoint-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/inventory</span>
+        <span class="endpoint-desc">List all available inventory</span>
+      </div>
+      <div class="endpoint-body">
+        <h4>Parameters</h4>
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>category</code></td><td>string</td><td>Filter: workstation, gpu, server, edge, parts</td></tr>
+          <tr><td><code>q</code></td><td>string</td><td>Search query (model name, brand, specs)</td></tr>
+          <tr><td><code>min_price</code></td><td>number</td><td>Minimum price filter</td></tr>
+          <tr><td><code>max_price</code></td><td>number</td><td>Maximum price filter</td></tr>
+          <tr><td><code>in_stock</code></td><td>boolean</td><td>Only show items in stock</td></tr>
+          <tr><td><code>sort</code></td><td>string</td><td>Sort: price_asc, price_desc, savings, newest</td></tr>
+          <tr><td><code>limit</code></td><td>number</td><td>Results per page (default 20, max 100)</td></tr>
+        </table>
+        <h4>Response</h4>
+<pre>{
+  <span class="k">"items"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"fc_7920_001"</span>,
+      <span class="k">"name"</span>: <span class="s">"Dell Precision 7920 Tower"</span>,
+      <span class="k">"category"</span>: <span class="s">"workstation"</span>,
+      <span class="k">"brand"</span>: <span class="s">"Dell"</span>,
+      <span class="k">"specs"</span>: {
+        <span class="k">"cpu"</span>: <span class="s">"Dual Xeon Gold 6148 (40 cores)"</span>,
+        <span class="k">"ram"</span>: <span class="s">"128GB DDR4"</span>,
+        <span class="k">"storage"</span>: <span class="s">"512GB SSD"</span>,
+        <span class="k">"gpu"</span>: <span class="s">"None (add your own)"</span>,
+        <span class="k">"pcie_slots"</span>: <span class="n">4</span>,
+        <span class="k">"power_supply"</span>: <span class="s">"1400W"</span>
+      },
+      <span class="k">"price"</span>: <span class="n">1899</span>,
+      <span class="k">"msrp"</span>: <span class="n">8500</span>,
+      <span class="k">"savings_pct"</span>: <span class="n">78</span>,
+      <span class="k">"condition"</span>: <span class="s">"refurbished"</span>,
+      <span class="k">"in_stock"</span>: <span class="n">true</span>,
+      <span class="k">"qty_available"</span>: <span class="n">12</span>,
+      <span class="k">"ai_capable"</span>: <span class="n">true</span>,
+      <span class="k">"tags"</span>: [<span class="s">"dual-socket"</span>, <span class="s">"gpu-ready"</span>, <span class="s">"swarmrig-base"</span>]
+    }
+  ],
+  <span class="k">"total"</span>: <span class="n">47</span>,
+  <span class="k">"page"</span>: <span class="n">1</span>
+}</pre>
+      </div>
+    </div>
+
+    <!-- GET /inventory/:id -->
+    <div class="endpoint">
+      <div class="endpoint-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/inventory/:id</span>
+        <span class="endpoint-desc">Get details for a specific item</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Returns full item details including specs, pricing history, market value comparison, and compatible upgrades.</p>
+<pre>{
+  <span class="k">"id"</span>: <span class="s">"fc_3090_015"</span>,
+  <span class="k">"name"</span>: <span class="s">"NVIDIA RTX 3090 24GB"</span>,
+  <span class="k">"category"</span>: <span class="s">"gpu"</span>,
+  <span class="k">"specs"</span>: {
+    <span class="k">"vram"</span>: <span class="s">"24GB GDDR6X"</span>,
+    <span class="k">"cuda_cores"</span>: <span class="n">10496</span>,
+    <span class="k">"tdp"</span>: <span class="s">"350W"</span>,
+    <span class="k">"slot_width"</span>: <span class="s">"triple"</span>,
+    <span class="k">"pcie"</span>: <span class="s">"4.0 x16"</span>,
+    <span class="k">"architecture"</span>: <span class="s">"Ampere (sm_86)"</span>
+  },
+  <span class="k">"ai_specs"</span>: {
+    <span class="k">"max_model_bf16"</span>: <span class="s">"9B parameters"</span>,
+    <span class="k">"max_model_q4"</span>: <span class="s">"27B parameters"</span>,
+    <span class="k">"vllm_compatible"</span>: <span class="n">true</span>,
+    <span class="k">"ollama_compatible"</span>: <span class="n">true</span>,
+    <span class="k">"training_capable"</span>: <span class="s">"9B LoRA (bf16)"</span>
+  },
+  <span class="k">"pricing"</span>: {
+    <span class="k">"our_price"</span>: <span class="n">699</span>,
+    <span class="k">"msrp"</span>: <span class="n">1499</span>,
+    <span class="k">"market_avg"</span>: <span class="n">825</span>,
+    <span class="k">"ebay_avg"</span>: <span class="n">870</span>,
+    <span class="k">"savings_vs_market"</span>: <span class="s">"15% below market"</span>
+  },
+  <span class="k">"compatible_with"</span>: [<span class="s">"Dell Precision 7920"</span>, <span class="s">"HP Z8 G4"</span>, <span class="s">"Any PCIe 3.0+ x16"</span>]
+}</pre>
+      </div>
+    </div>
+
+    <!-- GET /hardware/lookup -->
+    <div class="endpoint">
+      <div class="endpoint-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/hardware/lookup</span>
+        <span class="endpoint-desc">Look up any hardware — specs, value, AI capability</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Look up any compute hardware by model name. Returns full specifications, current market value, AI capability assessment, and compatible upgrades. Works even for items not in our inventory.</p>
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>q</code> <span class="param-req">required</span></td><td>string</td><td>Hardware model name (e.g. "RTX PRO 4000", "Dell 7920")</td></tr>
+        </table>
+<pre><span class="c">GET /hardware/lookup?q=RTX+PRO+4000</span>
+
+{
+  <span class="k">"model"</span>: <span class="s">"NVIDIA RTX PRO 4000 Blackwell"</span>,
+  <span class="k">"type"</span>: <span class="s">"gpu"</span>,
+  <span class="k">"manufacturer"</span>: <span class="s">"NVIDIA"</span>,
+  <span class="k">"generation"</span>: <span class="s">"Blackwell (sm_120)"</span>,
+  <span class="k">"specs"</span>: {
+    <span class="k">"vram"</span>: <span class="s">"24GB GDDR7"</span>,
+    <span class="k">"cuda_cores"</span>: <span class="n">8960</span>,
+    <span class="k">"memory_bus"</span>: <span class="s">"192-bit"</span>,
+    <span class="k">"tdp"</span>: <span class="s">"~100W"</span>,
+    <span class="k">"slot_width"</span>: <span class="s">"single"</span>,
+    <span class="k">"pcie"</span>: <span class="s">"5.0 x16"</span>,
+    <span class="k">"power_connector"</span>: <span class="s">"1x 16-pin"</span>,
+    <span class="k">"length"</span>: <span class="s">"9.50 in"</span>
+  },
+  <span class="k">"ai_capability"</span>: {
+    <span class="k">"inference_bf16"</span>: <span class="s">"9B models comfortably"</span>,
+    <span class="k">"inference_q4"</span>: <span class="s">"14B models"</span>,
+    <span class="k">"training"</span>: <span class="s">"4B LoRA, or combine 4x for 27B"</span>,
+    <span class="k">"vllm"</span>: <span class="n">true</span>,
+    <span class="k">"ollama"</span>: <span class="n">true</span>,
+    <span class="k">"tensor_parallel"</span>: <span class="s">"Combine 4x = 96GB (27B bf16)"</span>,
+    <span class="k">"density"</span>: <span class="s">"7x per ASUS 790 Pro Sage = 168GB VRAM"</span>
+  },
+  <span class="k">"market_value"</span>: {
+    <span class="k">"new_msrp"</span>: <span class="n">1800</span>,
+    <span class="k">"used_range"</span>: <span class="s">"N/A (too new)"</span>,
+    <span class="k">"value_per_gb_vram"</span>: <span class="n">75</span>,
+    <span class="k">"value_per_watt"</span>: <span class="n">18</span>
+  },
+  <span class="k">"comparison"</span>: {
+    <span class="k">"vs_rtx_3090"</span>: <span class="s">"Same VRAM, 1/3 power, single slot vs triple, GDDR7 vs GDDR6X"</span>,
+    <span class="k">"vs_rtx_4500"</span>: <span class="s">"24GB vs 32GB, but single slot and lower power"</span>,
+    <span class="k">"vs_rtx_6000"</span>: <span class="s">"24GB vs 96GB. 4x PRO 4000 = 96GB for similar cost."</span>
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- GET /hardware/value -->
+    <div class="endpoint">
+      <div class="endpoint-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/hardware/value</span>
+        <span class="endpoint-desc">Get current market value for hardware</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Returns current market pricing from multiple sources — eBay sold listings, refurbisher prices, wholesale rates.</p>
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>q</code> <span class="param-req">required</span></td><td>string</td><td>Hardware model name</td></tr>
+          <tr><td><code>condition</code></td><td>string</td><td>new, refurbished, used, any (default: any)</td></tr>
+        </table>
+<pre>{
+  <span class="k">"model"</span>: <span class="s">"Dell Precision 7920"</span>,
+  <span class="k">"market_data"</span>: {
+    <span class="k">"new_msrp"</span>: <span class="n">8500</span>,
+    <span class="k">"refurbished_avg"</span>: <span class="n">2400</span>,
+    <span class="k">"refurbished_range"</span>: [<span class="n">1500</span>, <span class="n">3900</span>],
+    <span class="k">"ebay_sold_avg"</span>: <span class="n">2100</span>,
+    <span class="k">"wholesale_pallet"</span>: <span class="s">"$800-1200/unit in lots of 10+"</span>,
+    <span class="k">"depreciation_curve"</span>: <span class="s">"~20%/year from new"</span>
+  },
+  <span class="k">"fishcake_price"</span>: <span class="n">1899</span>,
+  <span class="k">"fishcake_vs_market"</span>: <span class="s">"21% below refurb average"</span>,
+  <span class="k">"sources"</span>: [<span class="s">"eBay sold"</span>, <span class="s">"PCSP"</span>, <span class="s">"ServerMonkey"</span>, <span class="s">"Dell Refurbished"</span>],
+  <span class="k">"last_updated"</span>: <span class="s">"2026-03-22T00:00:00Z"</span>
+}</pre>
+      </div>
+    </div>
+
+    <!-- POST /cloi -->
+    <div class="endpoint">
+      <div class="endpoint-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span class="method post">POST</span>
+        <span class="endpoint-path">/cloi</span>
+        <span class="endpoint-desc">Generate a Compute Letter of Intent</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Generate a CLOI (Compute Letter of Intent) for bulk procurement. Returns a formatted document ready to send to suppliers.</p>
+<pre><span class="c">POST /cloi</span>
+{
+  <span class="k">"seller"</span>: <span class="s">"PCSP"</span>,
+  <span class="k">"items"</span>: [
+    {<span class="k">"model"</span>: <span class="s">"Dell Precision 7920"</span>, <span class="k">"qty"</span>: <span class="n">50</span>, <span class="k">"target_price"</span>: <span class="n">1200</span>},
+    {<span class="k">"model"</span>: <span class="s">"Quadro T1000 4GB"</span>, <span class="k">"qty"</span>: <span class="n">100</span>, <span class="k">"target_price"</span>: <span class="n">80</span>}
+  ],
+  <span class="k">"payment"</span>: <span class="s">"wire_3_days"</span>,
+  <span class="k">"shipping"</span>: <span class="s">"buyer_pickup"</span>
+}
+
+<span class="c">→ Returns formatted CLOI document (markdown + PDF link)</span></pre>
+      </div>
+    </div>
+
+    <!-- GET /sellers -->
+    <div class="endpoint">
+      <div class="endpoint-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/sellers</span>
+        <span class="endpoint-desc">Browse our seller network</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Returns our curated database of 42+ verified compute sellers across government surplus, liquidators, refurbishers, GPU dealers, and ITAD companies.</p>
+        <table class="param-table">
+          <tr><th>Param</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>category</code></td><td>string</td><td>Filter: government, liquidator, refurbisher, gpu_dealer, itad, auction, intel</td></tr>
+          <tr><td><code>priority</code></td><td>boolean</td><td>Only show priority sellers</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- HARDWARE DATABASE -->
+  <section class="hw-section">
+    <h2>Hardware reference</h2>
+    <p>Quick lookup — specs, market values, and AI capability for common hardware.</p>
+
+    <table class="hw-table">
+      <tr><th>Model</th><th>Key Specs</th><th>Market Value</th><th>AI Use</th></tr>
+      <tr><td colspan="4" class="hw-cat">GPUs</td></tr>
+      <tr><td>RTX PRO 6000</td><td>96GB GDDR7, 300W, dual slot</td><td>$7,000-10,000</td><td>27B bf16, training</td></tr>
+      <tr><td>RTX PRO 5000</td><td>48GB GDDR7, ~250W, dual slot</td><td>$4,699 new</td><td>27B quantized</td></tr>
+      <tr><td>RTX PRO 4500</td><td>32GB GDDR7, ~150W, dual slot</td><td>~$2,000 new</td><td>9B bf16</td></tr>
+      <tr><td>RTX PRO 4000</td><td>24GB GDDR7, ~100W, single slot</td><td>~$1,800 new</td><td>9B bf16, 4x=27B</td></tr>
+      <tr><td>RTX 3090</td><td>24GB GDDR6X, 350W, triple slot</td><td>$500-950 used</td><td>9B bf16</td></tr>
+      <tr><td>Quadro T1000</td><td>4GB GDDR6, 50W, low profile</td><td>$80-150 used</td><td>2B quantized (kids)</td></tr>
+      <tr><td>Quadro T400</td><td>2GB GDDR6, 30W, low profile</td><td>$40-80 used</td><td>Basic inference</td></tr>
+      <tr><td colspan="4" class="hw-cat">Workstations</td></tr>
+      <tr><td>Dell Precision 7920</td><td>Dual Xeon, 128-256GB, tower</td><td>$1,500-3,900 refurb</td><td>SwarmRig base</td></tr>
+      <tr><td>Dell Precision 5820</td><td>Single Xeon, 64-128GB</td><td>$800-2,000 refurb</td><td>Dev rig</td></tr>
+      <tr><td>HP Z8 G4</td><td>Dual Xeon, 128-384GB</td><td>$1,200-3,500 refurb</td><td>SwarmRig base</td></tr>
+      <tr><td>HP Z4 G4</td><td>Xeon W, 64GB</td><td>$500-1,200 refurb</td><td>Kids rig (upgraded)</td></tr>
+      <tr><td>HP Z2 Tower G5</td><td>i7/Xeon, 32-64GB</td><td>$300-700 refurb</td><td>Kids starter</td></tr>
+      <tr><td>Lenovo P920</td><td>Dual Xeon, 128-256GB</td><td>$1,500-4,000 refurb</td><td>SwarmRig base</td></tr>
+      <tr><td colspan="4" class="hw-cat">Servers</td></tr>
+      <tr><td>Dell PowerEdge R740</td><td>2U, dual Xeon, GPU-capable</td><td>$800-3,000 refurb</td><td>Rack inference</td></tr>
+      <tr><td>HPE ProLiant DL380</td><td>2U, dual Xeon</td><td>$1,000-4,000 refurb</td><td>Rack compute</td></tr>
+      <tr><td colspan="4" class="hw-cat">Edge Devices</td></tr>
+      <tr><td>Zima Board</td><td>Intel N100, PCIe slot</td><td>$70-120 new</td><td>+T1000 = edge AI</td></tr>
+      <tr><td>Jetson Orin Nano</td><td>8GB, ARM, GPU integrated</td><td>$199-249 new</td><td>4B model local</td></tr>
+    </table>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-fish">🐟</div>
+  <p>
+    fishcake.ai — compute for everyone<br>
+    <a href="https://swarmandbee.ai">Swarm & Bee Intelligence</a>
+  </p>
+</footer>
+
+<script>
+// Hardware database for client-side search
+var HARDWARE = [
+  {name:"Dell Precision 7920 Tower",cat:"workstation",brand:"Dell",specs:"Dual Xeon Gold (40 cores) / 128GB DDR4 / 512GB SSD / 4x PCIe / 1400W PSU",price:1899,msrp:8500,ai:"SwarmRig base. Add any GPU. Runs 27B with RTX 3090/6000.",tags:["dual-socket","gpu-ready","swarmrig"]},
+  {name:"Dell Precision 5820 Tower",cat:"workstation",brand:"Dell",specs:"Xeon W (8-18 cores) / 64GB DDR4 / 256GB SSD",price:899,msrp:4500,ai:"Dev rig. Single GPU slot. Good for 9B inference.",tags:["single-socket","dev-rig"]},
+  {name:"HP Z8 G4 Tower",cat:"workstation",brand:"HP",specs:"Dual Xeon (40 cores) / 128GB DDR4 / 512GB SSD / Multiple PCIe",price:1499,msrp:7500,ai:"Equivalent to Dell 7920. SwarmRig capable.",tags:["dual-socket","gpu-ready","swarmrig"]},
+  {name:"HP Z4 G4 Tower",cat:"workstation",brand:"HP",specs:"Xeon W-2145 (8 cores) / 64GB DDR4 / 256GB SSD",price:649,msrp:3200,ai:"Kids rig with GPU upgrade. Great starter workstation.",tags:["single-socket","kids-upgrade"]},
+  {name:"HP Z2 Tower G5",cat:"workstation",brand:"HP",specs:"i7/Xeon / 32GB DDR4 / 256GB SSD",price:399,msrp:1800,ai:"Kids starter. Add low-profile GPU for basic AI.",tags:["entry","kids-starter"]},
+  {name:"Lenovo ThinkStation P920",cat:"workstation",brand:"Lenovo",specs:"Dual Xeon (40 cores) / 128GB DDR4 / 512GB SSD",price:1799,msrp:8000,ai:"SwarmRig base. Comparable to Dell 7920.",tags:["dual-socket","gpu-ready","swarmrig"]},
+  {name:"NVIDIA RTX 3090 24GB",cat:"gpu",brand:"NVIDIA",specs:"24GB GDDR6X / 10,496 CUDA / 350W / Triple slot / PCIe 4.0",price:699,msrp:1499,ai:"Runs 9B bf16. 27B quantized. The workhorse.",tags:["inference","training-9b"]},
+  {name:"NVIDIA RTX PRO 4000 24GB",cat:"gpu",brand:"NVIDIA",specs:"24GB GDDR7 / 8,960 CUDA / ~100W / Single slot / PCIe 5.0",price:1800,msrp:1800,ai:"The sniper. 9B bf16. 4x = 27B. 7x per rig = 168GB.",tags:["single-slot","low-power","blackwell"]},
+  {name:"NVIDIA RTX PRO 4500 32GB",cat:"gpu",brand:"NVIDIA",specs:"32GB GDDR7 / ~150W / Dual slot / PCIe 5.0",price:2000,msrp:2000,ai:"9B models with room. Good inference card.",tags:["inference","blackwell"]},
+  {name:"NVIDIA RTX PRO 5000 48GB",cat:"gpu",brand:"NVIDIA",specs:"48GB GDDR7 / 14,080 CUDA / ~250W / Dual slot / PCIe 5.0",price:4699,msrp:4699,ai:"27B quantized. Mid-tier between 4500 and 6000.",tags:["inference","training","blackwell"]},
+  {name:"NVIDIA RTX PRO 6000 96GB",cat:"gpu",brand:"NVIDIA",specs:"96GB GDDR7 / 300W / Dual slot / PCIe 5.0",price:10000,msrp:10000,ai:"27B bf16. Training king. Hard to find.",tags:["training","inference","blackwell","rare"]},
+  {name:"NVIDIA Quadro T1000 4GB",cat:"gpu",brand:"NVIDIA",specs:"4GB GDDR6 / 896 CUDA / 50W / Low profile / Single slot",price:89,msrp:375,ai:"Kids' GPU. Runs 2B quantized via Ollama. Fits Zima Board.",tags:["kids","low-profile","edge"]},
+  {name:"Zima Board",cat:"edge",brand:"Zima",specs:"Intel N100 / 8GB RAM / PCIe x4 slot / Compact",price:89,msrp:120,ai:"Add T1000 for edge AI. Great for kids.",tags:["edge","kids","pcie"]},
+  {name:"Jetson Orin Nano 8GB",cat:"edge",brand:"NVIDIA",specs:"8GB / ARM CPU + GPU / 15W",price:199,msrp:249,ai:"Runs 4B model locally. Built-in GPU.",tags:["edge","kids","ai-native"]},
+  {name:"Dell PowerEdge R740",cat:"server",brand:"Dell",specs:"2U / Dual Xeon / Up to 3TB RAM / GPU-capable",price:1200,msrp:8000,ai:"Rack mount inference. Add GPUs for fleet.",tags:["rack","gpu-capable","enterprise"]},
+];
+
+function searchHardware() {
+  var q = document.getElementById('hw-search').value.trim().toLowerCase();
+  var cat = document.getElementById('hw-category').value;
+  var results = document.getElementById('results');
+  if (!q && !cat) { results.style.display='none'; return; }
+
+  var matches = HARDWARE.filter(function(h) {
+    var matchQ = !q || h.name.toLowerCase().includes(q) || h.specs.toLowerCase().includes(q) || h.ai.toLowerCase().includes(q) || h.tags.some(function(t){return t.includes(q)});
+    var matchCat = !cat || h.cat === cat;
+    return matchQ && matchCat;
+  });
+
+  if (matches.length === 0) {
+    results.innerHTML = '<p style="padding:16px;color:var(--text-3);font-size:.9rem">No matches found. Try a different search.</p>';
+  } else {
+    results.innerHTML = matches.map(function(h) {
+      var save = h.msrp > h.price ? Math.round((1 - h.price/h.msrp)*100) : 0;
+      return '<div class="result-card">' +
+        '<h3>' + h.name + '</h3>' +
+        '<div class="result-specs">' + h.specs + '</div>' +
+        '<div class="result-prices">' +
+          '<div class="result-price"><div class="label">Our Price</div><div class="val">$' + h.price.toLocaleString() + '</div></div>' +
+          (h.msrp > h.price ? '<div class="result-price"><div class="label">MSRP</div><div class="val" style="text-decoration:line-through;color:var(--text-3)">$' + h.msrp.toLocaleString() + '</div></div>' : '') +
+          (save > 0 ? '<div class="result-price"><div class="label">Savings</div><div class="val green">' + save + '% off</div></div>' : '') +
+        '</div>' +
+        '<div style="margin-top:10px;font-size:.82rem;color:var(--text-2)"><strong>AI:</strong> ' + h.ai + '</div>' +
+        '<div class="result-tags">' + h.tags.map(function(t){return '<span class="tag">'+t+'</span>'}).join('') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+  results.style.display = 'block';
+}
+
+document.getElementById('hw-search').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') searchHardware();
+});
+</script>
+
+</body>
+</html>
