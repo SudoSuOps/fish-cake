@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fishcake — compute for everyone</title>
+<meta name="description" content="Refurbished workstations, GPUs, and servers at prices that make sense. We stretch compute so everyone gets a seat at the table.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐟</text></svg>">
+<link rel="canonical" href="https://fishcake.ai">
+<meta property="og:title" content="fishcake — compute for everyone">
+<meta property="og:description" content="Refurbished workstations, GPUs, and servers at prices that make sense.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://fishcake.ai">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf8f5;
+  --surface:#fff;
+  --surface-2:#f5f0eb;
+  --border:#e8e0d8;
+  --border-light:#f0ebe5;
+  --text:#2a2520;
+  --text-2:#6b6058;
+  --text-3:#9a9088;
+  --warm:#c8956c;
+  --warm-light:#f5ede5;
+  --warm-deep:#a87040;
+  --accent:#d4854a;
+  --green:#5a8a5c;
+  --radius:10px;
+  --font:'Inter',system-ui,sans-serif;
+  --serif:'Newsreader',Georgia,serif;
+  --max-w:860px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--warm-deep);text-decoration:none}
+a:hover{color:var(--accent)}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav{padding:20px 0;border-bottom:1px solid var(--border-light)}
+.nav-inner{max-width:var(--max-w);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.2rem;font-weight:500;letter-spacing:-.01em}
+.logo-fish{font-size:1.4rem;margin-right:6px}
+.nav-links{display:flex;gap:28px;font-size:.88rem;color:var(--text-2)}
+.nav-links a{color:var(--text-2);font-weight:400}
+.nav-links a:hover{color:var(--text)}
+
+/* HERO */
+.hero{padding:80px 0 60px;text-align:center}
+.hero h1{font-family:var(--serif);font-size:2.4rem;font-weight:400;letter-spacing:-.02em;line-height:1.3;margin-bottom:16px;color:var(--text)}
+.hero h1 em{font-style:italic;color:var(--warm-deep)}
+.hero p{font-size:1.05rem;color:var(--text-2);max-width:560px;margin:0 auto;line-height:1.8}
+
+/* STORY */
+.story{padding:48px 0;max-width:600px;margin:0 auto}
+.story p{font-family:var(--serif);font-size:1.1rem;color:var(--text-2);line-height:1.9;text-align:center;font-style:italic}
+
+/* DIVIDER */
+.divider{text-align:center;padding:32px 0;font-size:1.2rem;color:var(--border);letter-spacing:8px}
+
+/* CATEGORIES */
+.categories{padding:48px 0}
+.categories h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;text-align:center;margin-bottom:32px}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.cat-card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:28px 24px;text-align:center;transition:border-color .2s}
+.cat-card:hover{border-color:var(--warm)}
+.cat-icon{font-size:2rem;margin-bottom:10px}
+.cat-card h3{font-size:.95rem;font-weight:500;margin-bottom:6px}
+.cat-card p{font-size:.82rem;color:var(--text-3);line-height:1.6}
+.cat-price{font-size:.78rem;color:var(--warm-deep);font-weight:500;margin-top:8px}
+
+/* PRODUCTS */
+.products{padding:48px 0}
+.products h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;text-align:center;margin-bottom:8px}
+.products>p{text-align:center;color:var(--text-3);font-size:.9rem;margin-bottom:32px}
+.product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.product{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);padding:24px;transition:border-color .2s}
+.product:hover{border-color:var(--warm)}
+.product-tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--warm-deep);font-weight:600;margin-bottom:8px}
+.product h3{font-size:1rem;font-weight:500;margin-bottom:4px}
+.product .specs{font-size:.82rem;color:var(--text-3);line-height:1.7;margin-bottom:12px}
+.product .price{font-family:var(--serif);font-size:1.3rem;color:var(--text)}
+.product .price-original{font-size:.82rem;color:var(--text-3);text-decoration:line-through;margin-left:8px}
+.product .price-save{font-size:.78rem;color:var(--green);font-weight:500;margin-left:8px}
+
+/* KIDS */
+.kids{padding:64px 0;background:var(--warm-light);margin:48px 0;border-radius:var(--radius)}
+.kids-inner{max-width:var(--max-w);margin:0 auto;padding:0 24px;text-align:center}
+.kids h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;margin-bottom:8px}
+.kids .subtitle{font-size:.95rem;color:var(--text-2);margin-bottom:24px}
+.kids-stats{display:flex;justify-content:center;gap:48px;margin:24px 0}
+.kids-stat{text-align:center}
+.kids-stat .num{font-family:var(--serif);font-size:2rem;color:var(--warm-deep)}
+.kids-stat .label{font-size:.78rem;color:var(--text-3);margin-top:2px}
+.kids p{font-family:var(--serif);font-size:1.05rem;color:var(--text-2);line-height:1.8;max-width:520px;margin:24px auto 0;font-style:italic}
+.btn-warm{display:inline-block;margin-top:24px;padding:12px 32px;background:var(--warm-deep);color:#fff;border-radius:6px;font-weight:500;font-size:.9rem;border:none;cursor:pointer;font-family:var(--font)}
+.btn-warm:hover{background:var(--accent);color:#fff}
+
+/* HOW */
+.how{padding:48px 0}
+.how h2{font-family:var(--serif);font-size:1.6rem;font-weight:400;text-align:center;margin-bottom:32px}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.how-step{text-align:center;padding:20px 12px}
+.how-num{font-family:var(--serif);font-size:1.8rem;color:var(--warm);margin-bottom:8px}
+.how-step h3{font-size:.88rem;font-weight:500;margin-bottom:4px}
+.how-step p{font-size:.78rem;color:var(--text-3);line-height:1.6}
+
+/* NEWSLETTER */
+.newsletter{padding:48px 0;text-align:center}
+.newsletter h2{font-family:var(--serif);font-size:1.4rem;font-weight:400;margin-bottom:8px}
+.newsletter p{font-size:.88rem;color:var(--text-3);margin-bottom:20px}
+.newsletter-form{display:flex;max-width:400px;margin:0 auto;gap:8px}
+.newsletter-form input{flex:1;padding:11px 16px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:.88rem;background:var(--surface);color:var(--text);outline:none}
+.newsletter-form input:focus{border-color:var(--warm)}
+.newsletter-form button{padding:11px 24px;background:var(--warm-deep);color:#fff;border:none;border-radius:6px;font-weight:500;font-size:.88rem;cursor:pointer;font-family:var(--font)}
+.newsletter-status{font-size:.82rem;margin-top:8px;min-height:1.2em;color:var(--text-3)}
+
+/* FOOTER */
+footer{padding:48px 0 32px;border-top:1px solid var(--border-light);text-align:center}
+footer p{font-size:.82rem;color:var(--text-3);line-height:1.8}
+footer a{color:var(--text-2)}
+.footer-fish{font-size:1.4rem;margin-bottom:12px}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .hero h1{font-size:1.8rem}
+  .cat-grid{grid-template-columns:1fr}
+  .product-grid{grid-template-columns:1fr}
+  .how-steps{grid-template-columns:repeat(2,1fr)}
+  .kids-stats{gap:24px}
+  .nav-links{gap:16px;font-size:.82rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="logo-fish">🐟</span> fishcake</div>
+    <div class="nav-links">
+      <a href="#shop">Shop</a>
+      <a href="#kids">Kids</a>
+      <a href="#about">About</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Compute for <em>everyone</em></h1>
+    <p>Refurbished workstations, GPUs, and servers at prices that make sense. We buy what others retire and give it a second life.</p>
+  </section>
+
+  <!-- STORY -->
+  <section class="story">
+    <p>A big family stretches what it has so everyone eats. We do the same with compute. A retired workstation becomes a kid's first dev rig. A decommissioned GPU becomes someone's first AI model. Nothing gets wasted. Everyone gets a seat.</p>
+  </section>
+
+  <div class="divider">- - -</div>
+
+  <!-- CATEGORIES -->
+  <section class="categories" id="shop">
+    <h2>What we carry</h2>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <div class="cat-icon">🖥</div>
+        <h3>Workstations</h3>
+        <p>Dell Precision, HP Z-Series, Lenovo ThinkStation. Built for work that matters.</p>
+        <div class="cat-price">from $299</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🎮</div>
+        <h3>GPUs</h3>
+        <p>From Quadro T1000 for a kid's first rig to RTX PRO 4000 for inference. Every budget.</p>
+        <div class="cat-price">from $49</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🔧</div>
+        <h3>Parts & Upgrades</h3>
+        <p>RAM, NVMe, power supplies, cables. Everything to bring a machine back to life.</p>
+        <div class="cat-price">from $12</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🧠</div>
+        <h3>AI-Ready Rigs</h3>
+        <p>Pre-configured workstations with GPU, Linux, and vLLM. Plug in and run models.</p>
+        <div class="cat-price">from $899</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🌱</div>
+        <h3>Starter Kits</h3>
+        <p>Complete setups for kids and beginners. Workstation + monitor + keyboard. Ready to learn.</p>
+        <div class="cat-price">from $149</div>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">📡</div>
+        <h3>Edge Devices</h3>
+        <p>Zima Boards, Jetson Orin Nano, Intel NUCs. Small machines, big potential.</p>
+        <div class="cat-price">from $69</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">- - -</div>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="products">
+    <h2>This week</h2>
+    <p>Inventory changes as we source it. When it's gone, it's gone.</p>
+    <div class="product-grid">
+      <div class="product">
+        <div class="product-tag">Workstation</div>
+        <h3>Dell Precision 7920 Tower</h3>
+        <div class="specs">Dual Xeon Gold 6148 (40 cores) / 128GB DDR4 / 512GB SSD / Tower</div>
+        <div class="price">$1,899 <span class="price-original">$8,500</span> <span class="price-save">save 78%</span></div>
+      </div>
+      <div class="product">
+        <div class="product-tag">Workstation</div>
+        <h3>HP Z4 G4 Tower</h3>
+        <div class="specs">Xeon W-2145 (8 cores) / 64GB DDR4 / 256GB SSD / Tower</div>
+        <div class="price">$649 <span class="price-original">$3,200</span> <span class="price-save">save 80%</span></div>
+      </div>
+      <div class="product">
+        <div class="product-tag">GPU</div>
+        <h3>NVIDIA Quadro T1000 4GB</h3>
+        <div class="specs">4GB GDDR6 / 896 CUDA / Low Profile / Single Slot / 50W</div>
+        <div class="price">$89 <span class="price-original">$375</span> <span class="price-save">save 76%</span></div>
+      </div>
+      <div class="product">
+        <div class="product-tag">GPU</div>
+        <h3>NVIDIA RTX 3090 24GB</h3>
+        <div class="specs">24GB GDDR6X / 10,496 CUDA / Triple Slot / Runs 9B models</div>
+        <div class="price">$699 <span class="price-original">$1,499</span> <span class="price-save">save 53%</span></div>
+      </div>
+      <div class="product">
+        <div class="product-tag">Starter Kit</div>
+        <h3>Kid's First Dev Rig</h3>
+        <div class="specs">Dell OptiPlex / 16GB RAM / 256GB SSD / Ubuntu / Python + VS Code pre-installed</div>
+        <div class="price">$149</div>
+      </div>
+      <div class="product">
+        <div class="product-tag">AI-Ready</div>
+        <h3>SwarmRig Inference Box</h3>
+        <div class="specs">Dell 7920 / 128GB RAM / RTX 3090 / Ubuntu + vLLM / Runs 27B models</div>
+        <div class="price">$2,499</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- KIDS SECTION -->
+<section class="kids" id="kids">
+  <div class="kids-inner">
+    <h2>A computer for every kid who needs one</h2>
+    <div class="subtitle">SwarmSeed — free refurbished computers for kids. No strings attached.</div>
+
+    <div class="kids-stats">
+      <div class="kids-stat">
+        <div class="num">423</div>
+        <div class="label">devices donated</div>
+      </div>
+      <div class="kids-stat">
+        <div class="num">0</div>
+        <div class="label">cost to the kid</div>
+      </div>
+      <div class="kids-stat">
+        <div class="num">100%</div>
+        <div class="label">of donations go to hardware</div>
+      </div>
+    </div>
+
+    <p>Every machine we refurbish that a kid could use, a kid gets. We wipe it, load it with Linux and dev tools, test it, and ship it. The kid owns it. No data collected. No strings. Just compute.</p>
+
+    <a href="/apply" class="btn-warm">My kid needs a computer</a>
+    <br>
+    <a href="/donate" style="font-size:.85rem;color:var(--warm-deep);margin-top:12px;display:inline-block">I want to donate hardware</a>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="about">
+    <h2>How fishcake works</h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <h3>We source</h3>
+        <p>Government surplus, corporate refreshes, data center decommissions. Cash buyer, quick close.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <h3>We refurbish</h3>
+        <p>Wipe, test, upgrade where needed. Every machine verified working before it ships.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <h3>We price fairly</h3>
+        <p>We buy at liquidation prices and pass the savings on. No markup games.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">4</div>
+        <h3>Kids eat first</h3>
+        <p>A portion of every lot goes free to kids through SwarmSeed. Always.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">- - -</div>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <h2>Get notified on drops</h2>
+    <p>Inventory moves fast. We'll email you when new lots land.</p>
+    <form class="newsletter-form" onsubmit="return handleSubscribe(event)">
+      <input type="email" id="sub-email" placeholder="you@email.com" required>
+      <button type="submit" id="sub-btn">Notify me</button>
+    </form>
+    <p class="newsletter-status" id="sub-status"></p>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-fish">🐟</div>
+  <p>
+    fishcake.ai — compute for everyone<br>
+    A <a href="https://swarmandbee.ai">Swarm & Bee Intelligence</a> project<br><br>
+    <a href="/contact">Contact</a> &nbsp;&middot;&nbsp; <a href="/terms">Terms</a> &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a>
+  </p>
+</footer>
+
+<script>
+function handleSubscribe(e) {
+  e.preventDefault();
+  var email = document.getElementById('sub-email').value.trim();
+  var status = document.getElementById('sub-status');
+  var btn = document.getElementById('sub-btn');
+  if (!email) return false;
+  btn.textContent = 'Joining...';
+  btn.disabled = true;
+
+  fetch('https://discord.com/api/webhooks/1485069668573122591/LOI8UffI6GQEH5SRuFG_iVq0MgVXH0wKZTFpno09DKGx91cHmZmtvnP6EI3g8N-eyGGd', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      embeds: [{
+        title: 'fishcake.ai — New Subscriber',
+        color: 13208396,
+        fields: [{name: 'Email', value: email}],
+        footer: {text: 'fishcake.ai drop notifications'},
+        timestamp: new Date().toISOString()
+      }]
+    })
+  })
+  .then(function(r) {
+    if (r.ok || r.status === 204) {
+      status.style.color = '#5a8a5c';
+      status.textContent = "You're in. We'll email you when new inventory drops.";
+      document.getElementById('sub-email').value = '';
+    } else { throw new Error(); }
+  })
+  .catch(function() {
+    status.style.color = '#c8956c';
+    status.textContent = 'Something went wrong. Try again.';
+  })
+  .finally(function() { btn.textContent = 'Notify me'; btn.disabled = false; });
+  return false;
+}
+</script>
+
+</body>
+</html>
