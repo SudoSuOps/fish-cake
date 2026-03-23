@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fishcake — contact</title>
+<meta name="description" content="Get in touch. Bulk orders, hardware donations, partnerships, or just say hello.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐟</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf8f5;--surface:#fff;--surface-2:#f5f0eb;--border:#e8e0d8;--border-light:#f0ebe5;
+  --text:#2a2520;--text-2:#6b6058;--text-3:#9a9088;
+  --warm:#c8956c;--warm-light:#f5ede5;--warm-deep:#a87040;--accent:#d4854a;--green:#5a8a5c;
+  --radius:10px;--font:'Inter',system-ui,sans-serif;--serif:'Newsreader',Georgia,serif;--max-w:860px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--warm-deep);text-decoration:none}
+a:hover{color:var(--accent)}
+
+nav{padding:20px 0;border-bottom:1px solid var(--border-light)}
+.nav-inner{max-width:var(--max-w);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.2rem;font-weight:500}
+.logo-fish{font-size:1.4rem;margin-right:6px}
+.nav-links{display:flex;gap:28px;font-size:.88rem}
+.nav-links a{color:var(--text-2)}
+.nav-links a:hover{color:var(--text)}
+.nav-active{color:var(--warm-deep)!important;font-weight:500}
+
+.main{flex:1;max-width:520px;margin:0 auto;padding:48px 24px}
+.main h1{font-family:var(--serif);font-size:1.8rem;font-weight:400;margin-bottom:4px}
+.main>p{color:var(--text-3);font-size:.9rem;margin-bottom:28px}
+
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.78rem;color:var(--text-3);margin-bottom:4px;font-weight:500}
+.fg input,.fg textarea,.fg select{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:.88rem;background:var(--surface);color:var(--text);outline:none}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--warm)}
+.fg textarea{min-height:120px;resize:vertical}
+.btn{width:100%;padding:14px;background:var(--warm-deep);color:#fff;border:none;border-radius:6px;font-weight:600;font-size:.92rem;cursor:pointer;font-family:var(--font)}
+.btn:hover{background:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.status{font-size:.82rem;text-align:center;margin-top:10px;min-height:1.2em}
+
+.info{margin-top:32px;padding-top:24px;border-top:1px solid var(--border-light)}
+.info h3{font-size:.88rem;font-weight:500;margin-bottom:8px}
+.info p{font-size:.85rem;color:var(--text-2);line-height:1.8}
+
+footer{padding:32px 0;border-top:1px solid var(--border-light);text-align:center}
+footer p{font-size:.82rem;color:var(--text-3)}
+.footer-fish{font-size:1.4rem;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo"><span class="logo-fish">🐟</span> fishcake</a>
+    <div class="nav-links">
+      <a href="/shop">Shop</a>
+      <a href="/donate">Donate</a>
+      <a href="/dev">Developer</a>
+      <a href="/contact" class="nav-active">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <h1>Get in touch</h1>
+  <p>Bulk orders, hardware donations, partnerships, or just want to say hello.</p>
+
+  <form onsubmit="return sendContact(event)">
+    <div class="fg">
+      <label>Name</label>
+      <input type="text" id="c-name" required placeholder="Your name">
+    </div>
+    <div class="fg">
+      <label>Email</label>
+      <input type="email" id="c-email" required placeholder="you@email.com">
+    </div>
+    <div class="fg">
+      <label>What's this about?</label>
+      <select id="c-topic">
+        <option value="Bulk order">Bulk order (10+ units)</option>
+        <option value="Hardware donation">I want to donate hardware</option>
+        <option value="Kid needs a computer">My kid needs a computer</option>
+        <option value="Partnership">Partnership / collaboration</option>
+        <option value="Compute inquiry">Compute inquiry</option>
+        <option value="General">General question</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Message</label>
+      <textarea id="c-message" required placeholder="Tell us more..."></textarea>
+    </div>
+    <button type="submit" class="btn" id="c-btn">Send message</button>
+    <p class="status" id="c-status"></p>
+  </form>
+
+  <div class="info">
+    <h3>Other ways to reach us</h3>
+    <p>
+      Email: <a href="mailto:build@swarmandbee.ai">build@swarmandbee.ai</a><br>
+      Discord: <a href="https://discord.gg/swarmandbee">SwarmSeed server</a><br>
+      X: <a href="https://x.com/sabordonovan">@sabordonovan</a>
+    </p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-fish">🐟</div>
+  <p>fishcake.ai — compute for everyone</p>
+</footer>
+
+<script>
+function sendContact(e) {
+  e.preventDefault();
+  var name = document.getElementById('c-name').value.trim();
+  var email = document.getElementById('c-email').value.trim();
+  var topic = document.getElementById('c-topic').value;
+  var message = document.getElementById('c-message').value.trim();
+  var status = document.getElementById('c-status');
+  var btn = document.getElementById('c-btn');
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  fetch('https://discord.com/api/webhooks/1485623009506103368/JXYnYof3-c4C-IzyIrTx_sd3WN-WykWC9IJwk1l4h36BAPpmpAGw6JZIpVnvPV3Iwnyb', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      embeds: [{
+        title: '🐟 fishcake.ai — Contact Form',
+        color: 13208396,
+        fields: [
+          {name: 'Name', value: name, inline: true},
+          {name: 'Email', value: email, inline: true},
+          {name: 'Topic', value: topic, inline: true},
+          {name: 'Message', value: message}
+        ],
+        footer: {text: 'fishcake.ai/contact'},
+        timestamp: new Date().toISOString()
+      }]
+    })
+  })
+  .then(function(r) {
+    if (r.ok || r.status === 204) {
+      status.style.color = '#5a8a5c';
+      status.textContent = "Message sent. We'll get back to you.";
+      e.target.reset();
+    } else { throw new Error(); }
+  })
+  .catch(function() {
+    window.location.href = 'mailto:build@swarmandbee.ai?subject=' + encodeURIComponent('[fishcake] ' + topic) + '&body=' + encodeURIComponent(message + '\n\nFrom: ' + name + ' (' + email + ')');
+    status.style.color = '#c8956c';
+    status.textContent = 'Opening email...';
+  })
+  .finally(function() { btn.textContent = 'Send message'; btn.disabled = false; });
+  return false;
+}
+</script>
+
+</body>
+</html>
